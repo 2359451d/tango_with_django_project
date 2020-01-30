@@ -3,3 +3,4 @@ db.sqlite3
 .vscode
 test
 tests_chapter3.py
+tests_chapter4.py
