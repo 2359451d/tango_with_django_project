@@ -20,6 +20,7 @@ def index(request):
     context_dict['pages'] = page_list
 
     return render(request, 'rango/index.html', context=context_dict)
+
     
 def about(request):
     name_dict = {'name': 'Yao Du'}
@@ -57,7 +58,8 @@ def add_category(request):
         form = CategoryForm(request.POST)
         if form.is_valid():
             form.save(commit=True)
-            return redirect('/rango/')
+            # return redirect('/rango/')
+            return redirect(reverse('rango:index'))
         else:
             print(form.errors)
     return render(request, 'rango/add_category.html', {'form':form})
@@ -70,8 +72,8 @@ def add_page(request, category_name_slug):
 
     #cannot find the specific Category
     if category is None:
-        return redirect('/rango/')
-
+        # return redirect('/rango/')
+        return redirect(reverse('rango:index'))
     #initialise the form
     form = PageForm()
 
