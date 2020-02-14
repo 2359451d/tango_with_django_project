@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     NAME_MAX_LENGTH = 128
@@ -31,3 +32,16 @@ class Page(models.Model):
 
     def __str__(self):
         return self.title
+
+class UserProfile(models.Model):
+    # links UserProfile with User Model instance(association)
+    # construct one-to-one relationship with User model
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    #additional attributes we wish to include
+    website = models.URLField(blank=True)
+    picture = models.ImageField(upload_to='profile_images', blank=True)
+
+    def __str__(self):
+        #return meaningful string
+        return self.user.username
