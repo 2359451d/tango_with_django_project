@@ -11,11 +11,16 @@
 
 
 {% block body_block %}
+    <div class="jumbotron p-4">
+        <div class="container">
+            {% if category %}
+            <h1>{{ category.name}}</h1>
+            {% if pages %}
+        </div>
+
+
+    </div>
     
-    {% if category %}
-        <h1>{{ category.name}}</h1>
-    
-    {% if pages %}
     <ul>
         {% for page in pages %}
             <li><a href="{{page.url}}">{{ page.title }}</a></li>
