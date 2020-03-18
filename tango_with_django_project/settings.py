@@ -132,6 +132,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 
+
+# decoration method to control user group, when user is not authenticated
+# redirect to the below url
 LOGIN_URL = '/rango/login/'
 
 # If True, users can register.

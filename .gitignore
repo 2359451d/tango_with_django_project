@@ -4,3 +4,4 @@ db.sqlite3
 test
 tests_chapter3.py
 tests_chapter4.py
+*.key

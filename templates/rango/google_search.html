@@ -1,0 +1,23 @@
+{% extends 'rango/base.html' %}
+
+
+{% block title_block %}
+    Search
+{% endblock %}
+
+
+{% block body_block %}
+<div class="jumbotron p-4">
+    <div class="container">
+        <h1>Search</h1>
+    </div>
+</div>
+
+<form action="{% url 'rango:index' %}" role="form" id="_form" method="post">
+    {% csrf_token %}
+    <input type="text" name="term" size="30"> <input type="submit" value="Search">
+</form>
+
+{% endblock %}
+    
+    

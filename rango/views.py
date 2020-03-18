@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.urls import reverse
 from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
@@ -7,6 +7,28 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from rango.bing_search import run_query
+from rango.google_search import run_google_search
+
+# from rango.google_search import run_query
+
+def search(request):
+    result_list = []
+
+    if request.method == 'POST':
+        # search engine selection
+        selection = request.POST['search-selection']
+        print(selection)
+        # user query string
+        query = request.POST['query'].strip()
+        if query:
+            if selection == "Bing":
+                # run our bing func to get the results list
+                result_list = run_query(query)
+            else:
+                result_list = run_google_search(query)
+    
+    return render(request, 'rango/search.html', {'result_list': result_list,'query':query})
 
 # A helper method
 def get_server_side_cookie(request, cookie, default_val=None):
