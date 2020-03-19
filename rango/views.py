@@ -12,6 +12,7 @@ from rango.google_search import run_google_search
 from django.views import View
 from django.utils.decorators import method_decorator
 
+
 class SearchAddPageView(View):
     @method_decorator(login_required)
     def get(self, request):
