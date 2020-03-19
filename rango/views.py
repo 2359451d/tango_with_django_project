@@ -106,7 +106,6 @@ def register_profile(request):
             # refresh current user
             user_profile.user = request.user
             user_profile.save()
-
             return redirect(reverse('rango:index'))
         else:
             print(form.errors)
