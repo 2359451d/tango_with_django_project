@@ -17,7 +17,6 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'Categories'
 
-
     def __str__(self):
         return self.name
 
@@ -38,7 +37,7 @@ class UserProfile(models.Model):
     # construct one-to-one relationship with User model
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    #additional attributes we wish to include
+    #additional attributes we wish to include(blank=True)
     website = models.URLField(blank=True)
     picture = models.ImageField(upload_to='profile_images', blank=True)
 

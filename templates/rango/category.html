@@ -23,7 +23,15 @@
     
     <ul>
         {% for page in pages %}
-            <li><a href="{{page.url}}">{{ page.title }}</a></li>
+            <li><a href="{% url 'rango:goto' %}?page_id={{page.id}}">{{ page.title }}</a>
+            
+            {% if page.views <= 1 %}
+                <p>view: {{page.views}}</p>
+            {% else %}
+                <p>views: {{page.views}}</p>
+            {% endif %}
+                
+            </li>
         {% endfor %}
     </ul>        
     {% else %}
@@ -33,6 +41,45 @@
     {% if user.is_authenticated %}
         
     <a href="{% url 'rango:add_page' category.slug %}">Add Page</a>
+
+    <div>
+        <form class="form-inline" id="user-form" method="POST" action="{% url 'rango:show_category' category.slug %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <input class="form-group" size="50" name="query" id="query" type="text" placeholder="{{query}}" />
+            </div>
+
+            <button class="btn btn-primary" type="submit" name="submit">Search</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <!-- better to perform ajax to render the results -->
+        {% if result_list %}
+            <h2>Results</h2>
+            <div class="list-group">
+                {% for result in result_list %}
+                    <div class="list-group-item">
+                        <h3 class="list-group-item-heading">
+                            <a href="{% url 'rango:show_category' result.category_query.slug %}">
+                                {{result.category_query|safe|escape}}
+                            </a>
+                        </h3>
+                        
+                        {% for page in result.pages_query %}
+                        <p class="list-group-item">
+                            <a href="{% url 'rango:goto' %}?page_id={{page.id}}">
+                                {{page.title|safe|escape}}
+                            </a>
+                        </p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+
     {% endif %}
         
     {% else %}
