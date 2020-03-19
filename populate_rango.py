@@ -38,11 +38,43 @@ def populate():
             'url':'http://bottlepy.org/docs/dev/','views':10},
         {'title':'Flask',
             'url':'http://flask.pocoo.org','views':17} ]
+    
+    pascal_pages = [
+        {'title':'Pascal Tutorial',
+            'url':'https://www.tutorialspoint.com/pascal/index.htm','views':10}
+    ] 
+    perl_pages = [
+        {'title':"Beginner's Introduction to Perl",
+            'url':'https://www.perl.com/pub/2000/10/begperl1.html/','views':20}
+    ] 
+    php_pages = [
+        {'title':'PHP Tutorial',
+            'url':'https://www.w3schools.com/PHP/DEfaULT.asP','views':15},
+    ] 
+    prolog_pages = [
+        {'title':'A Short Tutorial on Prolog',
+            'url':'https://www.doc.gold.ac.uk/~mas02gw/prolog_tutorial/prologpages/','views':12},
+    ] 
+    postscript_pages = [
+        {'title':'Postscript Books',
+            'url':'https://www.psbooks.co.uk/','views':100}
+    ] 
+    programming_pages = [
+        {'title':'7 Essential Books for Programmers',
+            'url':'https://medium.com/better-programming/7-essential-books-for-programmers-869bca83b360','views':100}
+    ] 
 
 
     cats = {'Python': {'pages': python_pages, 'views':128, 'likes':64},
         'Django': {'pages': django_pages,'views':64,'likes':32},
-        'Other Frameworks': {'pages': other_pages,'views':32,'likes':16} }
+        'Other Frameworks': {'pages': other_pages,'views':32,'likes':16},
+        'Pascal': {'pages': pascal_pages,'views':52,'likes':1},
+        'Perl': {'pages': perl_pages,'views':22,'likes':12},
+        'PHP': {'pages': php_pages,'views':32,'likes':14},
+        'Prolog': {'pages': prolog_pages,'views':32,'likes':11},
+        'PostScript': {'pages': postscript_pages,'views':62,'likes':12},
+        'Programming': {'pages': programming_pages,'views':82,'likes':1},
+        }
 
     # If you want to add more categories or pages,
     # add them to the dictionaries above.

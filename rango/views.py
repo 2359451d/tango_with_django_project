@@ -12,6 +12,81 @@ from rango.google_search import run_google_search
 from django.views import View
 from django.utils.decorators import method_decorator
 
+class SearchAddPageView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        category_id = request.GET['category_id']
+        title = request.GET['title']
+        url = request.GET['url']
+        
+        try:
+            category = Category.objects.get(id=int(category_id))
+        except Category.DoesNotExist:
+            return HttpResponse('Error - category not found.')
+        except ValueError:
+            return HttpResponse('Error - bad category ID.')
+        
+        p = Page.objects.get_or_create(category=category,title=title,url=url)
+        pages = Page.objects.filter(category=category).order_by('-views')
+        return render(request, 'rango/page_listing.html', {'pages': pages})
+
+def get_category_list(max_results=0, starts_with=""):
+    """ 
+    optimise static search functionality
+    return a list of categories match the user query<starts_with> ---> query results
+    helper method for CateforySuggestionView
+    """
+    category_list = []
+
+    if starts_with:
+    # using the filter method to return a filtered set within all the categories
+        category_list = Category.objects.filter(name__istartswith=starts_with)
+    if max_results > 0:
+        if len(category_list) > max_results:
+            category_list = category_list[:max_results]
+    return category_list
+
+class CateforySuggestionView(View):
+    # /rango/suggest/
+    """ 
+    take user query(suggestion), return top 8 results
+    suggestion - > user query input
+    """
+    def get(self, request):
+        if 'suggestion' in request.GET:
+            suggestion = request.GET['suggestion']
+        else:
+            suggestion = ''
+        
+        # acquire the filetered categories
+        category_list = get_category_list(max_results=8,
+        starts_with=suggestion)
+        if len(category_list) == 0:
+            # no query results , default displaying all the category(after ranked)
+            category_list = Category.objects.order_by('-likes')
+            
+        return render(request,'rango/categories.html',{'categories': category_list})
+
+
+class LikeCategoryView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        context_dict = {}
+        # exam the request.GET dict,pick out the category
+        # /rango/like_category/?category_id=1
+        category_id = request.GET.get('category_id')
+        try:
+            category = Category.objects.get(id=int(category_id))
+        except Category.DoesNotExist:
+            return HttpResponse(-1)
+        except ValueError:
+            return HttpResponse(-1)
+
+        category.likes = category.likes+1
+        category.save()
+        # do not render the entire page, using ajax
+        return HttpResponse(category.likes)
+
 class ListProfilesView(View):
     @method_decorator(login_required)
     def get(self, request):
@@ -293,27 +368,70 @@ class ShowCategoryView(View):
         return context_dict
 
     def get(self, request, category_name_slug):
+        search_engine = request.GET.get('search_engine',False)
+        query = request.GET.get('query',False)
         context_dict = self.create_context_dict(category_name_slug)
-        return render(request, 'rango/category.html', context=context_dict)
-    
-    def post(self, request, category_name_slug):
-        # context_dict = {}
-        try:
-            query = request.POST['query'].strip()
+        # print(query)
+        # print(search_engine)
+        if search_engine == "site":
+            try:
+                if query:
+                    pages_query = []
+                    category_query = Category.objects.filter(slug__istartswith=query)
+                    for each in category_query:
+                        pages_set = Page.objects.filter(category=each)
+                        for p in pages_set:
+                            pages_query.append(p)
+
+                    context_dict['category_query'] = category_query
+                    context_dict['pages_query'] = pages_query
+                    return HttpResponse("1")
+                    
+            except Category.DoesNotExist:
+                # cannot find , .get() raise DoesNotExist exception.
+                #display nothing
+                context_dict['static_list'] = None
+        elif search_engine == "bing":
+            # search engine selection
+            # user query string
             if query:
                 context_dict = self.create_context_dict(category_name_slug)
-                category_query = Category.objects.get(slug=query)
-                pages_query = Page.objects.filter(category=category_query)
-                result_list = [{'category_query':category_query,'pages_query':pages_query}]
-                context_dict['result_list'] = result_list
-        except Category.DoesNotExist:
-            # cannot find , .get() raise DoesNotExist exception.
-            #display nothing
-            context_dict['pages'] = None      
-            context_dict['category'] = None
-            context_dict['result_list'] = None
+                context_dict['result_list'] = run_query(query)
+            # print(context_dict['result_list'])
+            return HttpResponse("1")
+        
+        return render(request, 'rango/category.html', context_dict)
 
-        return render(request, 'rango/category.html', context=context_dict)
+    def post(self, request, category_name_slug):
+        
+        search_engine = request.POST['search_engine'].strip()
+        context_dict = self.create_context_dict(category_name_slug)
+        query = request.POST['query'].strip()
+        if search_engine == "site":
+            try:
+                if query:
+                    pages_query = []
+                    category_query = Category.objects.filter(slug__istartswith=query)
+                    for each in category_query:
+                        pages_set = Page.objects.filter(category=each)
+                        for p in pages_set:
+                            pages_query.append(p)
+
+                    context_dict['category_query'] = category_query
+                    context_dict['pages_query'] = pages_query
+                    
+            except Category.DoesNotExist:
+                # cannot find , .get() raise DoesNotExist exception.
+                #display nothing
+                context_dict['static_list'] = None
+        elif search_engine == "bing":
+            # search engine selection
+            # user query string
+            if query:
+                context_dict = self.create_context_dict(category_name_slug)
+                context_dict['result_list'] = run_query(query)
+
+        return render(request, 'rango/category.html', context_dict)
 
 def show_category(request, category_name_slug):
     # deal with requested passed 'category_name_slug'

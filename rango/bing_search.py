@@ -19,7 +19,6 @@ def read_bing_key():
 
     if not bing_api_key:
         raise KeyError('Bing key not found')
-    print(bing_api_key)
     return bing_api_key
 
 def run_query(search_term):
@@ -46,12 +45,12 @@ def run_query(search_term):
     return results
 
 # run the script
-def main():
-    search_terms = input("Please enter the query content:")
-    results = run_query(search_terms)
-    for result in results:
-        print("Title: {0}, url: {1}, content: {2}".format(result['title'],result['link'],result['summary']))
-        print("-------------------->")
+# def main():
+#     search_terms = input("Please enter the query content:")
+#     results = run_query(search_terms)
+#     for result in results:
+#         print("Title: {0}, url: {1}, content: {2}".format(result['title'],result['link'],result['summary']))
+#         print("-------------------->")
 
-if __name__=='__main__':
-    main()
+# if __name__=='__main__':
+#     main()
