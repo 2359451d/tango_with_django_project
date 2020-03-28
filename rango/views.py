@@ -209,9 +209,9 @@ def register_profile(request):
 
 
     context_dict = {}
-    context_dict['name'] = user
     try:
         user = UserProfile.objects.get(id=user.id)
+        context_dict['name'] = user
         context_dict['url'] = user.website
         context_dict['img'] = user.picture
     except:
