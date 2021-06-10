@@ -3,7 +3,7 @@ cachetools==4.0.0
 certifi==2018.11.29
 chardet==3.0.4
 colorama==0.4.3
-Django==2.2.13
+Django==2.2.22
 django-googlesearch==0.2
 django-registration-redux==2.2
 google-api-core==1.16.0
